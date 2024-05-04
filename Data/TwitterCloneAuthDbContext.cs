@@ -3,8 +3,5 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TwitterClone.Data
 {
-    public class TwitterCloneAuthDbContext(DbContextOptions<TwitterCloneAuthDbContext> options) : IdentityDbContext(options)
-    {
-
-    }
+    public class TwitterCloneAuthDbContext(DbContextOptions<TwitterCloneAuthDbContext> options) : IdentityDbContext(options) {}
 }
