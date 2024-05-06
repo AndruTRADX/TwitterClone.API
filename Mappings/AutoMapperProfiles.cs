@@ -9,6 +9,8 @@ namespace TwitterClone.Mappings
         public AutoMapperProfiles() 
         {
             CreateMap<Tweet, TweetDTO>().ReverseMap();
+            CreateMap<Tweet, TweetDTOListItem>().ReverseMap();
+            CreateMap<Comment, CommentDTO>().ReverseMap();
         }
     }
 }

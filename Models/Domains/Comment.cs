@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace TwitterClone.Models.Domains
 {
-    public class Tweet
+    public class Comment
     {
         [Key]
         public Guid Id { get; set; }
@@ -14,6 +15,9 @@ namespace TwitterClone.Models.Domains
         [ForeignKey("User")]
         public string UserId { get; set; } = string.Empty;
 
+        [ForeignKey("Tweet")]
+        public Guid TweetId { get; set; }
+
         public string Content { get; set; } = string.Empty;
 
         public int Likes { get; set; }
@@ -21,6 +25,6 @@ namespace TwitterClone.Models.Domains
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [JsonIgnore]
-        public virtual ICollection<Comment>? Comments { get; set; }
+        public virtual Tweet? Tweet { get; set; }
     }
 }

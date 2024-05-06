@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
 using TwitterClone.Data;
 using TwitterClone.Models.Domains;
 using TwitterClone.Models.DTOs;
@@ -17,12 +15,14 @@ namespace TwitterClone.Repositories
 
             var skipResults = (offset - 1) * size;
 
-            return await tweets.Skip(skipResults).Take(size).ToListAsync();
+            return await tweets.OrderByDescending(t => t.CreatedAt).Skip(skipResults).Take(size).ToListAsync();
         }
 
         public async Task<Tweet?> GetTweetAsync(Guid id)
         {
-            var tweet = await context.Tweets.FindAsync(id);
+            var tweet = await context.Tweets
+                .Include(t => t.Comments.Take(5).OrderByDescending(c => c.CreatedAt))
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             return tweet;
         }
