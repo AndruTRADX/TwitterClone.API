@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
 using TwitterClone.Data;
+using TwitterClone.Mappings;
 using TwitterClone.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +28,12 @@ builder.Services.AddDbContext<TwitterCloneAuthDbContext>(options =>
 
 // Injectors
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+builder.Services.AddScoped<ITweetRepository, TweetRepository>();
 
+// AutoMapper Config
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
+// Identity Services
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("TwitterClone")

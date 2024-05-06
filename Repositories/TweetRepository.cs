@@ -1,13 +1,27 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TwitterClone.Data;
+using TwitterClone.Models.Domains;
+using TwitterClone.Models.DTOs;
 
 namespace TwitterClone.Repositories
 {
-    public class TweetRepository(TwitterCloneDbContext context, UserManager<IdentityUser> userManager) : ITweetRepository
+    public class TweetRepository(TwitterCloneDbContext context) : ITweetRepository
     {
-        public Task CreateTweet()
+        private readonly TwitterCloneDbContext context = context;
+
+        public async Task<Tweet> CreateTweetAsync(SubmitTweetDTO content, string userName, string userId)
         {
-            return Task.CompletedTask;
+            Tweet tweet = new()
+            {
+                Content = content.Content,
+                UserName = userName,
+                UserId = userId
+            };
+
+            await context.Tweets.AddAsync(tweet);
+            await context.SaveChangesAsync();
+
+            return tweet;
         }
     }
 }

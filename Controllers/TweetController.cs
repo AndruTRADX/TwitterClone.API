@@ -1,28 +1,36 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using TwitterClone.Models.DTOs;
+using TwitterClone.Repositories;
 
 namespace TwitterClone.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class TweetController : ControllerBase
+    public class TweetController(ITweetRepository tweetRepository, IMapper mapper) : ControllerBase
     {
-        [HttpGet]
-        [Route("users/current")]
-        public async Task<IActionResult> GetLoggerUserTweets()
-        {
-            var id = HttpContext.User.FindFirstValue("UserId");
-            var userName = HttpContext.User.FindFirstValue("UserName");
+        private readonly ITweetRepository tweetRepository = tweetRepository;
+        private readonly IMapper mapper = mapper;
 
-            if (id == null && userName == null)
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> GetLoggerUserTweets([FromBody] SubmitTweetDTO submitTweetDTO)
+        {
+            var userName = HttpContext.User.FindFirstValue("UserName");
+            var userId = HttpContext.User.FindFirstValue("UserId");
+
+            if (userName == null || userId == null) 
             {
-                return Ok("XD");
+                return BadRequest("The request has not been processed, try again.");
             }
 
-            return Ok(new { id, userName });
+            var tweetDomain = await tweetRepository.CreateTweetAsync(submitTweetDTO, userName, userId);
+            var tweetDTO = mapper.Map<TweetDTO>(tweetDomain);
+
+            return Ok(tweetDTO);
         }
     }
 }
