@@ -8,25 +8,26 @@ namespace TwitterClone.Repositories
 {
     public class TokenRepository(IConfiguration configuration) : ITokenRepository
     {
-        private readonly IConfiguration _configuration = configuration;
+        private readonly IConfiguration configuration = configuration;
 
         public string CreateJWTToken(IdentityUser user)
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Email, user.Email!)
+                new("UserId", user.Id),
+                new("UserName", user.UserName!),
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
+                configuration["Jwt:Issuer"],
+                configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddDays(30),
-                signingCredentials: credentials
-            );
+                expires: DateTime.Now.AddMinutes(15),
+                signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

@@ -14,7 +14,7 @@ namespace TwitterClone.Models.Domains
         public int Likes { get; set; }
 
         [ForeignKey("User")]
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         
         public IdentityUser User { get; set; }
     }

@@ -7,52 +7,61 @@ namespace TwitterClone.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository) : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepository;
+
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
+        {
+            this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
+        }
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerRequestDto)
         {
             var identityUser = new IdentityUser
             {
-                UserName = registerDTO.UserName,
-                Email = registerDTO.Email
+                UserName = registerRequestDto.UserName,
+                Email = registerRequestDto.Email
             };
 
-            var identityResult = await _userManager.CreateAsync(identityUser, registerDTO.Password);
+            var identityResult = await userManager.CreateAsync(identityUser, registerRequestDto.Password);
 
             if (identityResult.Succeeded)
             {
-                return Ok(new { message = "User registered successfully. Please login." });
+                return Ok("User was registered! Please login.");
             }
 
-            return BadRequest(new { message = "Failed to register user." });
+            return BadRequest("Something went wrong");
         }
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginRequestDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDTO.Email);
+            var user = await userManager.FindByEmailAsync(loginRequestDto.Email);
 
             if (user != null)
             {
-                var passwordIsValid = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
+                var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
-                if (passwordIsValid)
+                if (checkPasswordResult)
                 {
                     var jwtToken = tokenRepository.CreateJWTToken(user);
+
                     var response = new LoginResponseDTO
                     {
-                        JwtToken = jwtToken,
+                        JwtToken = jwtToken
                     };
+
                     return Ok(response);
                 }
             }
 
-            return BadRequest(new { message = "Email or password incorrect, please check your credentials :)" });
+            return BadRequest("User name or password incorrect");
         }
     }
 }

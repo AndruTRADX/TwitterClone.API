@@ -20,7 +20,7 @@ namespace TwitterClone.Data
                 entity.HasKey(t => t.Id);
                 entity.Property(t => t.Content).IsRequired().HasMaxLength(255);
                 entity.Property(t => t.Likes).HasDefaultValue(0);
-                entity.HasOne(t => t.User).WithMany().HasForeignKey(t => t.UserId);
+                entity.HasOne(t => t.User).WithMany().HasForeignKey(t => t.UserId).IsRequired();
             });
         }
 
