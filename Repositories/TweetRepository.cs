@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TwitterClone.Data;
 using TwitterClone.Models.Domains;
 using TwitterClone.Models.DTOs;
@@ -9,13 +10,24 @@ namespace TwitterClone.Repositories
     {
         private readonly TwitterCloneDbContext context = context;
 
-        public async Task<List<Tweet>> GetAllTweetsAsync(int size, int offset)
+        public async Task<List<TweetDTOListItem>> GetAllTweetsAsync(int size, int offset)
         {
-            var tweets = context.Tweets.AsQueryable();
+            var tweetsWithCommentsCount = await context.Tweets
+                .OrderByDescending(t => t.CreatedAt)
+                .Skip((offset - 1) * size)
+                .Take(size)
+                .Select(t => new TweetDTOListItem
+                {
+                    Id = t.Id,
+                    UserName = t.UserName,
+                    Content = t.Content,
+                    Likes = t.Likes,
+                    CreatedAt = t.CreatedAt,
+                    CommentsCount = t.Comments.Count()
+                })
+                .ToListAsync();
 
-            var skipResults = (offset - 1) * size;
-
-            return await tweets.OrderByDescending(t => t.CreatedAt).Skip(skipResults).Take(size).ToListAsync();
+            return tweetsWithCommentsCount;
         }
 
         public async Task<Tweet?> GetTweetAsync(Guid id)

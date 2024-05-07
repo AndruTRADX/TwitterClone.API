@@ -16,11 +16,9 @@ namespace TwitterClone.Controllers
         private readonly IMapper mapper = mapper;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTweets([FromQuery] int size = 10, [FromQuery] int offset = 1) { 
-            var tasksDomain = await tweetRepository.GetAllTweetsAsync(size, offset);
-            var tasksDTOs = mapper.Map<List<TweetDTOListItem>>(tasksDomain);
-
-            return Ok(tasksDTOs);
+        public async Task<IActionResult> GetAllTweets([FromQuery] int size = 10, [FromQuery] int offset = 1) {
+            var tweetDTOs = await tweetRepository.GetAllTweetsAsync(size, offset);
+            return Ok(tweetDTOs);
         }
 
         [HttpGet]
