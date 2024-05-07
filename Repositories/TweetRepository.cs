@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TwitterClone.Data;
 using TwitterClone.Models.Domains;
 using TwitterClone.Models.DTOs;
@@ -21,7 +20,7 @@ namespace TwitterClone.Repositories
                     Id = t.Id,
                     UserName = t.UserName,
                     Content = t.Content,
-                    Likes = t.Likes,
+                    Likes = t.Likes.Count(),
                     CreatedAt = t.CreatedAt,
                     CommentsCount = t.Comments.Count()
                 })

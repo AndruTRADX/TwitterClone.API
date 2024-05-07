@@ -35,9 +35,6 @@ namespace TwitterClone.Migrations.TwitterCloneDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("TweetId")
                         .HasColumnType("uniqueidentifier");
 
@@ -56,6 +53,26 @@ namespace TwitterClone.Migrations.TwitterCloneDb
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("TwitterClone.Models.Domains.Like", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TweetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TweetId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("TwitterClone.Models.Domains.Tweet", b =>
                 {
                     b.Property<Guid>("Id")
@@ -68,9 +85,6 @@ namespace TwitterClone.Migrations.TwitterCloneDb
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -96,9 +110,22 @@ namespace TwitterClone.Migrations.TwitterCloneDb
                     b.Navigation("Tweet");
                 });
 
+            modelBuilder.Entity("TwitterClone.Models.Domains.Like", b =>
+                {
+                    b.HasOne("TwitterClone.Models.Domains.Tweet", "Tweet")
+                        .WithMany("Likes")
+                        .HasForeignKey("TweetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tweet");
+                });
+
             modelBuilder.Entity("TwitterClone.Models.Domains.Tweet", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

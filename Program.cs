@@ -30,6 +30,7 @@ builder.Services.AddDbContext<TwitterCloneAuthDbContext>(options =>
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<ITweetRepository, TweetRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 
 // AutoMapper Config
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
