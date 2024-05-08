@@ -1,4 +1,5 @@
-﻿using TwitterClone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TwitterClone.Data;
 using TwitterClone.Models.Domains;
 using TwitterClone.Models.DTOs;
 
@@ -7,6 +8,35 @@ namespace TwitterClone.Repositories
     public class CommentRepository(TwitterCloneDbContext context) : ICommentRepository
     {
         private readonly TwitterCloneDbContext context = context;
+
+        public async Task<List<CommentDTOListItem>> GetCommentsForTweetAsync(Guid tweetId, int pageNumber, int pageSize)
+        {
+            var tweetWithComments = await context.Tweets
+                .Include(tweet => tweet.Comments)
+                .ThenInclude(comment => comment.Likes)
+                .FirstOrDefaultAsync(tweet => tweet.Id == tweetId);
+
+            if (tweetWithComments == null)
+            {
+                return [];
+            }
+
+            var commentsForTweet = tweetWithComments.Comments
+                .OrderByDescending(comment => comment.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(comment => new CommentDTOListItem
+                {
+                    Id = comment.Id,
+                    UserName = comment.UserName,
+                    Content = comment.Content,
+                    CreatedAt = comment.CreatedAt,
+                    LikesCount = comment.Likes.Count
+                })
+                .ToList();
+
+            return commentsForTweet;
+        }
 
         public async Task<Comment?> PostCommentToTweetAsync(SubmitCommentDTO submitCommentDTO, string userName, string userId, Guid tweetId)
         {

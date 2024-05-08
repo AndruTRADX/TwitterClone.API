@@ -31,6 +31,7 @@ builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<ITweetRepository, TweetRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+builder.Services.AddScoped<ILikeToCommentRepository, LikeToCommentRepository>();
 
 // AutoMapper Config
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));

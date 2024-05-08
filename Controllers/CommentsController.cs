@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,14 +10,23 @@ namespace TwitterClone.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CommentsController(ICommentRepository commentRepository) : ControllerBase
+    public class CommentsController(ICommentRepository commentRepository, IMapper mapper) : ControllerBase
     {
         private readonly ICommentRepository commentRepository = commentRepository;
+        private readonly IMapper mapper = mapper;
+
+        [HttpGet("{tweetId}")]
+        public async Task<IActionResult> GetCommentsForTweet(Guid tweetId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var comments = await commentRepository.GetCommentsForTweetAsync(tweetId, pageNumber, pageSize);
+
+            return Ok(comments);
+        }
 
         [HttpPost]
         [Route("{tweetId:Guid}")]
         [Authorize]
-        public async Task<IActionResult> PostCommentToTweet([FromRoute] Guid tweetId,[FromBody] SubmitCommentDTO commentDTO)
+        public async Task<IActionResult> PostCommentToTweet([FromRoute] Guid tweetId,[FromBody] SubmitCommentDTO submitCommentDTO)
         {
             var userName = HttpContext.User.FindFirstValue("UserName");
             var userId = HttpContext.User.FindFirstValue("UserId");
@@ -26,14 +36,17 @@ namespace TwitterClone.Controllers
                 return BadRequest("The request has not been processed, try again.");
             }
 
-            var comment = await commentRepository.PostCommentToTweetAsync(commentDTO, userName, userId, tweetId);
+            var commentDomain = await commentRepository.PostCommentToTweetAsync(submitCommentDTO, userName, userId, tweetId);
 
-            if (comment == null)
+            if (commentDomain == null)
             {
                 NotFound("Tweet has not been round.");
             }
 
-            return Ok(comment);
+            var commentDTO = mapper.Map<CommentDTO>(commentDomain);
+
+
+            return Ok(commentDTO);
         }
 
         [HttpDelete]
@@ -48,14 +61,16 @@ namespace TwitterClone.Controllers
                 return Unauthorized("Request has not been processed, please sign in.");
             }
 
-            var comment = await commentRepository.DeleteCommentFromTweetAsync(id, userId);
+            var commentDomain = await commentRepository.DeleteCommentFromTweetAsync(id, userId);
 
-            if (comment == null)
+            if (commentDomain == null)
             {
                 NotFound("Tweet has not been round.");
             }
 
-            return Ok(comment);
+            var commentDTO = mapper.Map<CommentDTO>(commentDomain);
+
+            return Ok(commentDTO);
         }
     }
 }

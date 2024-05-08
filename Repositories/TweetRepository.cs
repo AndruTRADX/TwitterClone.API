@@ -31,9 +31,7 @@ namespace TwitterClone.Repositories
 
         public async Task<Tweet?> GetTweetAsync(Guid id)
         {
-            var tweet = await context.Tweets
-                .Include(t => t.Comments.Take(5).OrderByDescending(c => c.CreatedAt))
-                .FirstOrDefaultAsync(t => t.Id == id);
+            var tweet = await context.Tweets.FirstOrDefaultAsync(t => t.Id == id);
 
             return tweet;
         }

@@ -23,5 +23,8 @@ namespace TwitterClone.Models.Domains
 
         [JsonIgnore]
         public virtual Tweet? Tweet { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<LikeToComment> Likes { get; set; } = [];
     }
 }

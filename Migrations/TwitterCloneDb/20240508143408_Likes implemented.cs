@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TwitterClone.Migrations.TwitterCloneDb
 {
     /// <inheritdoc />
-    public partial class TweetStructure : Migration
+    public partial class Likesimplemented : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,6 +67,25 @@ namespace TwitterClone.Migrations.TwitterCloneDb
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "LikesToComments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LikesToComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LikesToComments_Comments_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_TweetId",
                 table: "Comments",
@@ -76,16 +95,24 @@ namespace TwitterClone.Migrations.TwitterCloneDb
                 name: "IX_Likes_TweetId",
                 table: "Likes",
                 column: "TweetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LikesToComments_CommentId",
+                table: "LikesToComments",
+                column: "CommentId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comments");
+                name: "Likes");
 
             migrationBuilder.DropTable(
-                name: "Likes");
+                name: "LikesToComments");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Tweets");

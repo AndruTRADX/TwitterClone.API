@@ -12,8 +12,8 @@ using TwitterClone.Data;
 namespace TwitterClone.Migrations.TwitterCloneDb
 {
     [DbContext(typeof(TwitterCloneDbContext))]
-    [Migration("20240507152035_Tweet Structure")]
-    partial class TweetStructure
+    [Migration("20240508143408_Likes implemented")]
+    partial class Likesimplemented
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,6 +76,26 @@ namespace TwitterClone.Migrations.TwitterCloneDb
                     b.ToTable("Likes");
                 });
 
+            modelBuilder.Entity("TwitterClone.Models.Domains.LikeToComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.ToTable("LikesToComments");
+                });
+
             modelBuilder.Entity("TwitterClone.Models.Domains.Tweet", b =>
                 {
                     b.Property<Guid>("Id")
@@ -122,6 +142,22 @@ namespace TwitterClone.Migrations.TwitterCloneDb
                         .IsRequired();
 
                     b.Navigation("Tweet");
+                });
+
+            modelBuilder.Entity("TwitterClone.Models.Domains.LikeToComment", b =>
+                {
+                    b.HasOne("TwitterClone.Models.Domains.Comment", "Comment")
+                        .WithMany("Likes")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+                });
+
+            modelBuilder.Entity("TwitterClone.Models.Domains.Comment", b =>
+                {
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("TwitterClone.Models.Domains.Tweet", b =>

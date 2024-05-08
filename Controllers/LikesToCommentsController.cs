@@ -10,9 +10,10 @@ namespace TwitterClone.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LikesController(ILikeRepository likeRepository, IMapper mapper) : ControllerBase
+    public class LikesToCommentsController(ILikeToCommentRepository likeToCommentRepository, IMapper mapper) : ControllerBase
     {
-        private readonly ILikeRepository likeRepository = likeRepository;
+        private readonly ILikeToCommentRepository likeToCommentRepository = likeToCommentRepository;
+        private readonly IMapper mapper = mapper;
 
         [HttpPost]
         [Route("{tweetId}")]
@@ -21,22 +22,21 @@ namespace TwitterClone.Controllers
         {
             var userId = HttpContext.User.FindFirstValue("UserId");
 
-            if(userId == null)
+            if (userId == null)
             {
-                return BadRequest("You must log in in order to like this comment.");
+                return BadRequest("You must log in in order to like this post.");
             }
 
-            var isLikedToCommentDomain = await likeRepository.LikeToggle(tweetId, userId);
+            var isLikedDomain = await likeToCommentRepository.LikeToCommentToggle(tweetId, userId);
 
-            if(isLikedToCommentDomain == null)
+            if (isLikedDomain == null)
             {
                 return Ok(false);
             }
 
-            var likeDTO = mapper.Map<LikeDTO>(isLikedToCommentDomain);
+            var likeDTO = mapper.Map<LikeDTO>(isLikedDomain);
 
             return Ok(likeDTO);
         }
-
     }
 }

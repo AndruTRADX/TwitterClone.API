@@ -1,6 +1,6 @@
 ﻿namespace TwitterClone.Models.DTOs
 {
-    public class CommentDTO
+    public class CommentDTOListItem
     {
         public Guid Id { get; set; }
 
@@ -9,5 +9,7 @@
         public string Content { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public int LikesCount { get; set; }
     }
 }
