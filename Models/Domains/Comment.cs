@@ -9,6 +9,8 @@ namespace TwitterClone.Models.Domains
         [Key]
         public Guid Id { get; set; }
 
+        public string FirstName { get; set; } = string.Empty;
+
         public string UserName { get; set; } = string.Empty;
 
         [ForeignKey("User")]

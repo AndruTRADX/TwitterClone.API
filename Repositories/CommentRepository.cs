@@ -28,6 +28,7 @@ namespace TwitterClone.Repositories
                 .Select(comment => new CommentDTOListItem
                 {
                     Id = comment.Id,
+                    FirstName = comment.FirstName,
                     UserName = comment.UserName,
                     Content = comment.Content,
                     CreatedAt = comment.CreatedAt,
@@ -38,12 +39,13 @@ namespace TwitterClone.Repositories
             return commentsForTweet;
         }
 
-        public async Task<Comment?> PostCommentToTweetAsync(SubmitCommentDTO submitCommentDTO, string userName, string userId, Guid tweetId)
+        public async Task<Comment?> PostCommentToTweetAsync(SubmitCommentDTO submitCommentDTO, string userName, string firstName, string userId, Guid tweetId)
         {
             Comment comment = new()
             {
                 Content = submitCommentDTO.Content,
                 UserName = userName,
+                FirstName = firstName,
                 UserId = userId,
                 TweetId = tweetId,
             };

@@ -19,6 +19,7 @@ namespace TwitterClone.Repositories
                 {
                     Id = t.Id,
                     UserName = t.UserName,
+                    FirstName = t.FirstName,
                     Content = t.Content,
                     Likes = t.Likes.Count(),
                     CreatedAt = t.CreatedAt,
@@ -36,12 +37,13 @@ namespace TwitterClone.Repositories
             return tweet;
         }
 
-        public async Task<Tweet> CreateTweetAsync(SubmitTweetDTO content, string userName, string userId)
+        public async Task<Tweet> CreateTweetAsync(SubmitTweetDTO content, string userName, string firstName, string userId)
         {
             Tweet tweet = new()
             {
                 Content = content.Content,
                 UserName = userName,
+                FirstName = firstName,
                 UserId = userId
             };
 
@@ -79,7 +81,6 @@ namespace TwitterClone.Repositories
             await context.SaveChangesAsync();
 
             return tweet;
-
         }
     }
 }

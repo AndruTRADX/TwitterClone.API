@@ -28,15 +28,16 @@ namespace TwitterClone.Controllers
         [Authorize]
         public async Task<IActionResult> PostCommentToTweet([FromRoute] Guid tweetId,[FromBody] SubmitCommentDTO submitCommentDTO)
         {
-            var userName = HttpContext.User.FindFirstValue("UserName");
             var userId = HttpContext.User.FindFirstValue("UserId");
+            var firstName = HttpContext.User.FindFirstValue("FirstName");
+            var userName = HttpContext.User.FindFirstValue("UserName");
 
-            if (userName == null || userId == null)
+            if (userName == null || userId == null || firstName == null)
             {
                 return BadRequest("The request has not been processed, try again.");
             }
 
-            var commentDomain = await commentRepository.PostCommentToTweetAsync(submitCommentDTO, userName, userId, tweetId);
+            var commentDomain = await commentRepository.PostCommentToTweetAsync(submitCommentDTO, userName, firstName, userId, tweetId);
 
             if (commentDomain == null)
             {
