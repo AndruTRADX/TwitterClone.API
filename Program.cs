@@ -5,12 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TwitterClone.Data;
 using TwitterClone.Mappings;
+using TwitterClone.Models.Domains;
 using TwitterClone.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
@@ -37,9 +37,9 @@ builder.Services.AddScoped<ILikeToCommentRepository, LikeToCommentRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 // Identity Services
-builder.Services.AddIdentityCore<IdentityUser>()
+builder.Services.AddIdentityCore<ApplicationUser>()
     .AddRoles<IdentityRole>()
-    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("TwitterClone")
+    .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("TwitterClone")
     .AddEntityFrameworkStores<TwitterCloneAuthDbContext>()
     .AddDefaultTokenProviders();
 
@@ -53,7 +53,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
-
+// Auth Services
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     options.TokenValidationParameters = new TokenValidationParameters

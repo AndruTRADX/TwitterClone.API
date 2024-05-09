@@ -5,7 +5,13 @@ namespace TwitterClone.Models.DTOs
     public class RegisterDTO
     {
         [Required]
-        public string Name { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required]
+        public string Biography { get; set; } = string.Empty;
 
         [Required]
         public string UserName { get; set; } = string.Empty;

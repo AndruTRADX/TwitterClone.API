@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Models.Domains;
 using TwitterClone.Models.DTOs;
 using TwitterClone.Repositories;
 
@@ -9,10 +10,10 @@ namespace TwitterClone.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
+        public AuthController(UserManager<ApplicationUser> userManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
@@ -20,15 +21,18 @@ namespace TwitterClone.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO registerRequestDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerRequestDTO)
         {
-            var identityUser = new IdentityUser
+            var identityUser = new ApplicationUser
             {
-                UserName = registerRequestDto.UserName,
-                Email = registerRequestDto.Email
+                FirstName = registerRequestDTO.FirstName,
+                LastName = registerRequestDTO.LastName,
+                Biography = registerRequestDTO.Biography,
+                UserName = registerRequestDTO.UserName,
+                Email = registerRequestDTO.Email
             };
 
-            var identityResult = await userManager.CreateAsync(identityUser, registerRequestDto.Password);
+            var identityResult = await userManager.CreateAsync(identityUser, registerRequestDTO.Password);
 
             if (identityResult.Succeeded)
             {

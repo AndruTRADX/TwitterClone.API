@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using TwitterClone.Models.Domains;
 
 namespace TwitterClone.Repositories
 {
     public interface ITokenRepository
     {
-        string CreateJWTToken(IdentityUser user);
+        string CreateJWTToken(ApplicationUser user);
     }
 }
