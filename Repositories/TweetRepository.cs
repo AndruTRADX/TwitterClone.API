@@ -5,9 +5,10 @@ using TwitterClone.Models.DTOs;
 
 namespace TwitterClone.Repositories
 {
-    public class TweetRepository(TwitterCloneDbContext context) : ITweetRepository
+    public class TweetRepository(TwitterCloneDbContext context, TwitterCloneAuthDbContext authDbContext) : ITweetRepository
     {
         private readonly TwitterCloneDbContext context = context;
+        private readonly TwitterCloneAuthDbContext authDbContext = authDbContext;
 
         public async Task<List<TweetDTOListItem>> GetAllTweetsAsync(int size, int offset)
         {
@@ -37,7 +38,7 @@ namespace TwitterClone.Repositories
             return tweet;
         }
 
-        public async Task<Tweet> CreateTweetAsync(SubmitTweetDTO content, string userName, string firstName, string userId)
+        public async Task<Tweet?> CreateTweetAsync(SubmitTweetDTO content, string userName, string firstName, string userId)
         {
             Tweet tweet = new()
             {
@@ -47,8 +48,20 @@ namespace TwitterClone.Repositories
                 UserId = userId
             };
 
+            var user = await authDbContext.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            
+
             await context.Tweets.AddAsync(tweet);
+            user.TweetIds.Add(tweet.Id.ToString());
+
             await context.SaveChangesAsync();
+            await authDbContext.SaveChangesAsync();
 
             return tweet;
         }
@@ -71,14 +84,18 @@ namespace TwitterClone.Repositories
         public async Task<Tweet?> DeleteTweetAsync(Guid id, string userId)
         {
             var tweet = await context.Tweets.FindAsync(id);
+            var user = await authDbContext.Users.FindAsync(userId);
 
-            if (tweet == null || tweet.UserId != userId)
+            if (tweet == null || tweet.UserId != userId || user == null)
             {
                 return null;
             }
 
             context.Tweets.Remove(tweet);
+            user.TweetIds.Remove(tweet.Id.ToString());
+
             await context.SaveChangesAsync();
+            await authDbContext.SaveChangesAsync();
 
             return tweet;
         }

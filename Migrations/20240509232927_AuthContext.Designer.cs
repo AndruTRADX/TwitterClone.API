@@ -12,7 +12,7 @@ using TwitterClone.Data;
 namespace TwitterClone.Migrations
 {
     [DbContext(typeof(TwitterCloneAuthDbContext))]
-    [Migration("20240509143554_AuthContext")]
+    [Migration("20240509232927_AuthContext")]
     partial class AuthContext
     {
         /// <inheritdoc />

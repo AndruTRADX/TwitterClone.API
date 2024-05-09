@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TwitterClone.Migrations.TwitterCloneDb
 {
     /// <inheritdoc />
-    public partial class Profilemodifications : Migration
+    public partial class Context : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
