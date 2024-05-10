@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TwitterClone.Models.DTOs;
 using TwitterClone.Repositories;
 
@@ -57,6 +59,23 @@ namespace TwitterClone.Controllers
             var usersDTO = mapper.Map<List<ApplicationUserDTO>>(usersDomain);
 
             return Ok(usersDTO);
+        }
+
+        [HttpPatch]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserProfile([FromBody] SubmitProfileDTO profileInfo)
+        {
+            var userId = HttpContext.User.FindFirstValue("UserId");
+
+            if (userId == null)
+            {
+                return BadRequest("You must log into your account in order to update your profile.");
+            }
+
+            var updatedProfileDomain = await profileRepository.UpdateUserProfileAsync(profileInfo, userId);
+            var updatedProfileDTO = mapper.Map<ApplicationUserDTO>(updatedProfileDomain);
+
+            return Ok(updatedProfileDTO);
         }
     }
 }

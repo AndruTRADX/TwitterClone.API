@@ -65,5 +65,24 @@ namespace TwitterClone.Repositories
 
             return orderedUsers;
         }
+
+        public async Task<ApplicationUser?> UpdateUserProfileAsync(SubmitProfileDTO submitProfileDTO, string userId)
+        {
+            var user = await authDbContext.Users.FindAsync(userId);
+
+            if (user == null) { 
+                return null;
+            }
+
+            user.UserName = submitProfileDTO.UserName;
+            user.FirstName = submitProfileDTO.FirstName;
+            user.LastName = submitProfileDTO.LastName;
+            user.Email = submitProfileDTO.Email;
+            user.Biography = submitProfileDTO.Biography;
+
+            await authDbContext.SaveChangesAsync();
+
+            return user;
+        }
     }
 }

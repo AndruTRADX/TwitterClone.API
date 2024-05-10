@@ -8,5 +8,6 @@ namespace TwitterClone.Repositories
         Task<ApplicationUser?> GetUserProfileAsync(string userName);
         Task<List<TweetDTOListItem>?> GetAllUserTweetsAsync(string userName, int pageNumber, int pageSize);
         Task<List<ApplicationUser>> SearchUsersAsync(string searchTerm);
+        Task<ApplicationUser?> UpdateUserProfileAsync(SubmitProfileDTO submitProfileDTO, string userId);
     }
 }
