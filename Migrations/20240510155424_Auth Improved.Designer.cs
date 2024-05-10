@@ -12,8 +12,8 @@ using TwitterClone.Data;
 namespace TwitterClone.Migrations
 {
     [DbContext(typeof(TwitterCloneAuthDbContext))]
-    [Migration("20240509232927_AuthContext")]
-    partial class AuthContext
+    [Migration("20240510155424_Auth Improved")]
+    partial class AuthImproved
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,6 +21,9 @@ namespace TwitterClone.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);

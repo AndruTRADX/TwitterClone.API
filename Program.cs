@@ -23,6 +23,7 @@ builder.Services.AddDbContext<TwitterCloneDbContext>(options =>
 });
 builder.Services.AddDbContext<TwitterCloneAuthDbContext>(options =>
 {
+    options.UseLazyLoadingProxies(); // Habilitar carga diferida (lazy loading)
     options.UseSqlServer(builder.Configuration.GetConnectionString("TwitterCloneAuthConnectionString"));
 });
 
@@ -32,6 +33,7 @@ builder.Services.AddScoped<ITweetRepository, TweetRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 builder.Services.AddScoped<ILikeToCommentRepository, LikeToCommentRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
 // AutoMapper Config
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));

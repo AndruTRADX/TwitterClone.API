@@ -13,6 +13,7 @@ namespace TwitterClone.Mappings
             CreateMap<Comment, CommentDTO>().ReverseMap();
             CreateMap<Like, LikeDTO>().ReverseMap();
             CreateMap<LikeToComment, LikeDTO>().ReverseMap();
+            CreateMap<ApplicationUser, ApplicationUserDTO>().ReverseMap();
         }
     }
 }

@@ -7,7 +7,6 @@ namespace TwitterClone.Models.Domains
         public required string FirstName { get; set; } = string.Empty;
         public required string LastName { get; set; } = string.Empty;
         public string Biography { get; set; } = string.Empty;
-        public List<string> TweetIds { get; set; } = [];
-        
+        public virtual List<string> TweetIds { get; set; } = [];
     }
 }

@@ -55,8 +55,6 @@ namespace TwitterClone.Repositories
                 return null;
             }
 
-            
-
             await context.Tweets.AddAsync(tweet);
             user.TweetIds.Add(tweet.Id.ToString());
 
