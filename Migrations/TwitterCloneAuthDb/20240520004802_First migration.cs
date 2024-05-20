@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TwitterClone.Migrations
+namespace TwitterClone.Migrations.TwitterCloneAuthDb
 {
     /// <inheritdoc />
-    public partial class AuthImproved : Migration
+    public partial class Firstmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

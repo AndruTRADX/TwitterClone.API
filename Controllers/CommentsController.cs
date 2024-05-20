@@ -26,26 +26,23 @@ namespace TwitterClone.Controllers
         [HttpPost]
         [Route("{tweetId:Guid}")]
         [Authorize]
-        public async Task<IActionResult> PostCommentToTweet([FromRoute] Guid tweetId,[FromBody] SubmitCommentDTO submitCommentDTO)
+        public async Task<IActionResult> PostCommentToTweet([FromRoute] Guid tweetId, [FromBody] SubmitCommentDTO submitCommentDTO)
         {
             var userId = HttpContext.User.FindFirstValue("UserId");
-            var firstName = HttpContext.User.FindFirstValue("FirstName");
-            var userName = HttpContext.User.FindFirstValue("UserName");
 
-            if (userName == null || userId == null || firstName == null)
+            if (userId == null)
             {
                 return BadRequest("The request has not been processed, try again.");
             }
 
-            var commentDomain = await commentRepository.PostCommentToTweetAsync(submitCommentDTO, userName, firstName, userId, tweetId);
+            var commentDomain = await commentRepository.PostCommentToTweetAsync(submitCommentDTO, userId, tweetId);
 
             if (commentDomain == null)
             {
-                NotFound("Tweet has not been round.");
+                return NotFound("Tweet not found.");
             }
 
-            var commentDTO = mapper.Map<CommentDTO>(commentDomain);
-
+            var commentDTO = mapper.Map<CommentDTOCreated>(commentDomain);
 
             return Ok(commentDTO);
         }
@@ -53,12 +50,12 @@ namespace TwitterClone.Controllers
         [HttpDelete]
         [Route("{id:Guid}")]
         [Authorize]
-        public async Task<IActionResult> PostCommentToTweet([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteComment([FromRoute] Guid id)
         {
             var userId = HttpContext.User.FindFirstValue("UserId");
 
             if (userId == null)
-            { 
+            {
                 return Unauthorized("Request has not been processed, please sign in.");
             }
 
@@ -66,10 +63,10 @@ namespace TwitterClone.Controllers
 
             if (commentDomain == null)
             {
-                NotFound("Tweet has not been round.");
+                return NotFound("Comment not found.");
             }
 
-            var commentDTO = mapper.Map<CommentDTO>(commentDomain);
+            var commentDTO = mapper.Map<CommentDTOCreated>(commentDomain);
 
             return Ok(commentDTO);
         }

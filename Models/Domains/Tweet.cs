@@ -9,10 +9,6 @@ namespace TwitterClone.Models.Domains
         [Key]
         public Guid Id { get; set; }
 
-        public string FirstName { get; set; } = string.Empty;
-
-        public string UserName { get; set; } = string.Empty;
-
         [ForeignKey("User")]
         public string UserId { get; set; } = string.Empty;
 
@@ -21,9 +17,9 @@ namespace TwitterClone.Models.Domains
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [JsonIgnore]
-        public virtual ICollection<Comment> Comments { get; set; } = [];
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
         [JsonIgnore]
-        public virtual ICollection<Like> Likes { get; set; } = [];
+        public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
     }
 }

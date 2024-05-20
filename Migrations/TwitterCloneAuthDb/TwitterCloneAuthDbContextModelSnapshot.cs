@@ -8,7 +8,7 @@ using TwitterClone.Data;
 
 #nullable disable
 
-namespace TwitterClone.Migrations
+namespace TwitterClone.Migrations.TwitterCloneAuthDb
 {
     [DbContext(typeof(TwitterCloneAuthDbContext))]
     partial class TwitterCloneAuthDbContextModelSnapshot : ModelSnapshot

@@ -5,9 +5,10 @@ using TwitterClone.Models.DTOs;
 
 namespace TwitterClone.Repositories
 {
-    public class CommentRepository(TwitterCloneDbContext context) : ICommentRepository
+    public class CommentRepository(TwitterCloneDbContext context, TwitterCloneAuthDbContext authDbContext) : ICommentRepository
     {
         private readonly TwitterCloneDbContext context = context;
+        private readonly TwitterCloneAuthDbContext authDbContext = authDbContext;
 
         public async Task<List<CommentDTOListItem>> GetCommentsForTweetAsync(Guid tweetId, int pageNumber, int pageSize)
         {
@@ -21,31 +22,38 @@ namespace TwitterClone.Repositories
                 return [];
             }
 
-            var commentsForTweet = tweetWithComments.Comments
-                .OrderByDescending(comment => comment.CreatedAt)
+            var commentDTOs = new List<CommentDTOListItem>();
+
+            foreach (var comment in tweetWithComments.Comments)
+            {
+                var user = await authDbContext.Users.FindAsync(comment.UserId);
+                if (user != null)
+                {
+                    commentDTOs.Add(new CommentDTOListItem
+                    {
+                        Id = comment.Id,
+                        UserName = user.UserName!,
+                        FirstName = user.FirstName,
+                        Content = comment.Content,
+                        CreatedAt = comment.CreatedAt,
+                        LikesCount = comment.Likes.Count
+                    });
+                }
+            }
+
+            return commentDTOs
+                .OrderByDescending(c => c.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .Select(comment => new CommentDTOListItem
-                {
-                    Id = comment.Id,
-                    FirstName = comment.FirstName,
-                    UserName = comment.UserName,
-                    Content = comment.Content,
-                    CreatedAt = comment.CreatedAt,
-                    LikesCount = comment.Likes.Count
-                })
                 .ToList();
-
-            return commentsForTweet;
         }
 
-        public async Task<Comment?> PostCommentToTweetAsync(SubmitCommentDTO submitCommentDTO, string userName, string firstName, string userId, Guid tweetId)
+
+        public async Task<Comment?> PostCommentToTweetAsync(SubmitCommentDTO submitCommentDTO, string userId, Guid tweetId)
         {
             Comment comment = new()
             {
                 Content = submitCommentDTO.Content,
-                UserName = userName,
-                FirstName = firstName,
                 UserId = userId,
                 TweetId = tweetId,
             };
@@ -54,7 +62,8 @@ namespace TwitterClone.Repositories
 
             var tweet = await context.Tweets.FindAsync(tweetId);
 
-            if (tweet == null) {
+            if (tweet == null)
+            {
                 return null;
             }
 
@@ -76,11 +85,17 @@ namespace TwitterClone.Repositories
         {
             var commentToDelete = await context.Comments.FindAsync(commentId);
 
-            if (commentToDelete == null || commentToDelete.UserId != userId) { return null; }
+            if (commentToDelete == null || commentToDelete.UserId != userId)
+            {
+                return null;
+            }
 
             var tweet = await context.Tweets.FindAsync(commentToDelete.TweetId);
 
-            if (tweet == null) { return null; }
+            if (tweet == null)
+            {
+                return null;
+            }
 
             tweet.Comments.Remove(commentToDelete);
             context.Comments.Remove(commentToDelete);
@@ -89,5 +104,6 @@ namespace TwitterClone.Repositories
 
             return commentToDelete;
         }
+
     }
 }

@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/app-twitterclone-eastus-dev-001/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsTwitterCloneAuthConnect_704B0F879D",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sqlserver-twitterclone-eastus-dev-001/databases/db-twitterclone-eastus-dev-001",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:TwitterCloneAuthConnectionString",
+      "dynamicId": null
+    },
+    "mssql2": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/app-twitterclone-eastus-dev-001/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsTwitterCloneConnectionS_CC3FA1A246",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sqlserver-twitterclone-eastus-dev-001/databases/db-twitterclone-eastus-dev-001",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:TwitterCloneConnectionString"
+    }
+  }
+}

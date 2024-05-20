@@ -12,39 +12,66 @@ namespace TwitterClone.Repositories
 
         public async Task<List<TweetDTOListItem>> GetAllTweetsAsync(int size, int offset)
         {
-            var tweetsWithCommentsCount = await context.Tweets
+            var tweets = await context.Tweets
                 .OrderByDescending(t => t.CreatedAt)
                 .Skip((offset - 1) * size)
                 .Take(size)
-                .Select(t => new TweetDTOListItem
-                {
-                    Id = t.Id,
-                    UserName = t.UserName,
-                    FirstName = t.FirstName,
-                    Content = t.Content,
-                    Likes = t.Likes.Count(),
-                    CreatedAt = t.CreatedAt,
-                    CommentsCount = t.Comments.Count()
-                })
+                .Include("Likes")
+                .Include("Comments")
                 .ToListAsync();
 
-            return tweetsWithCommentsCount;
+            var tweetDTOs = new List<TweetDTOListItem>();
+
+            foreach (var tweet in tweets)
+            {
+                var user = await authDbContext.Users.FindAsync(tweet.UserId);
+                if (user != null)
+                {
+                    tweetDTOs.Add(new TweetDTOListItem
+                    {
+                        Id = tweet.Id,
+                        UserName = user.UserName!,
+                        FirstName = user.FirstName,
+                        Content = tweet.Content,
+                        Likes = tweet.Likes.Count(),
+                        CreatedAt = tweet.CreatedAt,
+                        CommentsCount = tweet.Comments.Count()
+                    });
+                }
+            }
+
+            return tweetDTOs;
         }
 
-        public async Task<Tweet?> GetTweetAsync(Guid id)
+        public async Task<TweetDTO?> GetTweetAsync(Guid id)
         {
             var tweet = await context.Tweets.FirstOrDefaultAsync(t => t.Id == id);
+            if (tweet == null)
+            {
+                return null;
+            }
 
-            return tweet;
+            var user = await authDbContext.Users.FindAsync(tweet.UserId);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new TweetDTO
+            {
+                Id = tweet.Id,
+                UserName = user.UserName!,
+                FirstName = user.FirstName,
+                Content = tweet.Content,
+                CreatedAt = tweet.CreatedAt
+            };
         }
 
-        public async Task<Tweet?> CreateTweetAsync(SubmitTweetDTO content, string userName, string firstName, string userId)
+        public async Task<Tweet?> CreateTweetAsync(SubmitTweetDTO content, string userId)
         {
             Tweet tweet = new()
             {
                 Content = content.Content,
-                UserName = userName,
-                FirstName = firstName,
                 UserId = userId
             };
 

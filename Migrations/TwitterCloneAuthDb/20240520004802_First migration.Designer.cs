@@ -9,11 +9,11 @@ using TwitterClone.Data;
 
 #nullable disable
 
-namespace TwitterClone.Migrations
+namespace TwitterClone.Migrations.TwitterCloneAuthDb
 {
     [DbContext(typeof(TwitterCloneAuthDbContext))]
-    [Migration("20240510155424_Auth Improved")]
-    partial class AuthImproved
+    [Migration("20240520004802_First migration")]
+    partial class Firstmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

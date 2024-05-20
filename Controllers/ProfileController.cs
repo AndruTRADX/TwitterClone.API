@@ -17,7 +17,7 @@ namespace TwitterClone.Controllers
 
         [HttpGet]
         [Route("{userName}")]
-        public async Task<IActionResult> GetUserProfile([FromRoute]  string userName)
+        public async Task<IActionResult> GetUserProfile([FromRoute] string userName)
         {
             var userDomain = await profileRepository.GetUserProfileAsync(userName);
             

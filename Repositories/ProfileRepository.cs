@@ -21,7 +21,7 @@ namespace TwitterClone.Repositories
 
             if (user == null)
             {
-                return [];
+                return new List<TweetDTOListItem>();
             }
 
             var tweetIds = user.TweetIds.Select(id => Guid.Parse(id)).ToList();
@@ -31,19 +31,29 @@ namespace TwitterClone.Repositories
                 .OrderByDescending(tweet => tweet.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .Select(t => new TweetDTOListItem
-                {
-                    Id = t.Id,
-                    UserName = t.UserName,
-                    FirstName = t.FirstName,
-                    Content = t.Content,
-                    Likes = t.Likes.Count(),
-                    CreatedAt = t.CreatedAt,
-                    CommentsCount = t.Comments.Count()
-                })
                 .ToListAsync();
 
-            return userTweets;
+            var userTweetsDTO = new List<TweetDTOListItem>();
+
+            foreach (var tweet in userTweets)
+            {
+                var tweetUser = await authDbContext.Users.FindAsync(tweet.UserId);
+                if (tweetUser != null)
+                {
+                    userTweetsDTO.Add(new TweetDTOListItem
+                    {
+                        Id = tweet.Id,
+                        UserName = tweetUser.UserName!,
+                        FirstName = tweetUser.FirstName,
+                        Content = tweet.Content,
+                        Likes = tweet.Likes.Count(),
+                        CreatedAt = tweet.CreatedAt,
+                        CommentsCount = tweet.Comments.Count
+                    });
+                }
+            }
+
+            return userTweetsDTO;
         }
 
         public async Task<List<ApplicationUser>> SearchUsersAsync(string searchTerm)
@@ -70,7 +80,8 @@ namespace TwitterClone.Repositories
         {
             var user = await authDbContext.Users.FindAsync(userId);
 
-            if (user == null) { 
+            if (user == null)
+            {
                 return null;
             }
 

@@ -15,10 +15,7 @@ namespace TwitterClone.Repositories
             var claims = new List<Claim>
             {
                 new("UserId", user.Id),
-                new("FirstName", user.FirstName!),
-                new("UserName", user.UserName!),
             };
-
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

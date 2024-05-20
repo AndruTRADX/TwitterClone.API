@@ -42,16 +42,14 @@ namespace TwitterClone.Controllers
         public async Task<IActionResult> PostTweet([FromBody] SubmitTweetDTO submitTweetDTO)
         {
             var userId = HttpContext.User.FindFirstValue("UserId");
-            var firstName = HttpContext.User.FindFirstValue("FirstName");
-            var userName = HttpContext.User.FindFirstValue("UserName");
 
-            if (userName == null || userId == null || firstName == null) 
+            if (userId == null) 
             {
                 return BadRequest("The request has not been processed, try again.");
             }
 
-            var tweetDomain = await tweetRepository.CreateTweetAsync(submitTweetDTO, userName, firstName, userId);
-            var tweetDTO = mapper.Map<TweetDTO>(tweetDomain);
+            var tweetDomain = await tweetRepository.CreateTweetAsync(submitTweetDTO, userId);
+            var tweetDTO = mapper.Map<TweetDTOCreated>(tweetDomain);
 
             return Ok(tweetDTO);
         }
@@ -75,7 +73,7 @@ namespace TwitterClone.Controllers
                 return BadRequest("Your tweet was not found.");
             }
 
-            var tweetDTO = mapper.Map<TweetDTO>(tweetUpdatedDomain);
+            var tweetDTO = mapper.Map<TweetDTOCreated>(tweetUpdatedDomain);
 
             return Ok(tweetDTO);
         }
@@ -99,7 +97,7 @@ namespace TwitterClone.Controllers
                 return BadRequest("Your tweet was not found.");
             }
 
-            var tweetDTO = mapper.Map<TweetDTO>(tweetRemovedDomain);
+            var tweetDTO = mapper.Map<TweetDTOCreated>(tweetRemovedDomain);
 
             return Ok(tweetDTO);
         }
