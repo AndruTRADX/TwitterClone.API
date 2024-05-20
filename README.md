@@ -186,8 +186,6 @@ If you see on the **authorized required** endpoints that even though we do not s
 The JWT (JSON Web Token) used for authorization carries specific user information, which is utilized by authorized endpoints even if not explicitly provided in requests.
 
 - **`UserId`**: This unique identifier is crucial for internal application validations and authorization logic but is never exposed to users.
-- **`UserName`**: Serves as the primary identifier for users within the application without compromising security. Users can use this identifier to interact with their own accounts and identify others.
-- **`FirstName`**: This information is included to personalize the display of user names in tweets and comments.
 
 The JWT ensures that authorized actions are performed only by authenticated users while protecting sensitive information.
 
